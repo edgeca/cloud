@@ -67,7 +67,7 @@ def main(_):
     for i in range(FLAGS.iterations):
         print("Starting iteration: {}".format(str(i)))
         with Pool(FLAGS.users) as p:
-            results = p.starmap(predict, [data for i in range(FLAGS.users)])
+            results = p.map(predict, [data for i in range(FLAGS.users)])
         print("Iteration {} completed.".format(str(i)))
 
 
