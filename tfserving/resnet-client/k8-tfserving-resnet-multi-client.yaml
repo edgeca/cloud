@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  generateName: resnet-multi-client-
+spec:
+  containers:
+  - name: resnet-container
+    image: niacainfosys/cloud-tfserving-resnet-client
+    imagePullPolicy: Always
+    command: [sh, -c]
+    args: ["python3 resnet_multi_client_grpc.py --users=4 --batch_size=50 --image=cat.jpg --iterations=100 --server=resnet-service:8500"]
+  restartPolicy: Never
