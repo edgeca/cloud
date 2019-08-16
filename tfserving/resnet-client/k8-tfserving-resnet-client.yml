@@ -8,5 +8,5 @@ spec:
     image: niacainfosys/cloud-tfserving-resnet-client
     imagePullPolicy: Always
     command: [sh, -c]
-    args: ["python3 resnet_client_grpc.py --server=resnet-service:8500"]
+    args: ["python3 resnet_client_grpc.py --server=resnet-service:8500 & python3 resnet_client_grpc.py --server=resnet-service:8500 & python3 resnet_client_grpc.py --server=resnet-service:8500 & python3 resnet_client_grpc.py --server=resnet-service:8500 &"]
   restartPolicy: Never
