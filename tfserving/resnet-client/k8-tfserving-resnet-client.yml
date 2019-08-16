@@ -15,27 +15,11 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: resnet-server
-  labels:
-    app: resnet-server
+  name: resnet-client
 spec:
   containers:
   - name: resnet-container
-    image: niacainfosys/cloud-tfserving-resnet:1.14.0
-    ports:
-    - containerPort: 8500
+    image: niacainfosys/cloud-tfserving-resnet-client
+    command: [sh, -c]
+    args: ["ping -c 3 resnet-service ; python3 resnet_client_grpc.py --server=resnet-service:8500"]
   restartPolicy: Never
----
-apiVersion: v1
-kind: Service
-metadata:
-  labels:
-    run: resnet-service
-  name: resnet-service
-spec:
-  ports:
-  - port: 8500
-    targetPort: 8500
-  selector:
-    app: resnet-server
-  type: ClusterIP
