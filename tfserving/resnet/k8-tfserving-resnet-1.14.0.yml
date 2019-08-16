@@ -12,24 +12,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ==============================================================================
-
-apiVersion: extensions/v1beta1
-kind: Deployment
+apiVersion: v1
+kind: Pod
 metadata:
-  name: resnet-deployment
+  name: resnet-server
+  labels:
+    app: resnet-server
 spec:
-  replicas: 1
-  template:
-    metadata:
-      labels:
-        app: resnet-server
-    spec:
-      containers:
-      - name: resnet-container
-        image: niacainfosys/cloud-tfserving-resnet:1.14.0
-        ports:
-        - containerPort: 8500
-      restartPolicy: Never
+  containers:
+  - name: resnet-container
+    image: niacainfosys/cloud-tfserving-resnet:1.14.0
+    ports:
+    - containerPort: 8500
+  restartPolicy: Never
 ---
 apiVersion: v1
 kind: Service
