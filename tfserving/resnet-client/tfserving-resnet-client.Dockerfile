@@ -8,7 +8,7 @@ RUN apt-get -qq update && apt-get -qq install curl -y --no-install-recommends
 RUN apt-get -qq update && apt-get -qq install wget -y --no-install-recommends
 
 # Install python packages
-RUN pip3 install tensorflow-serving-api==1.14.0 grpcio gevent
+RUN pip3 install tensorflow-serving-api==1.14.0 grpcio gevent requests
 
 # Copy client code
 COPY src /src
