@@ -52,6 +52,7 @@ def main(_):
     data = [data for i in range(FLAGS.batch_size)]
 
     for i in range(FLAGS.iterations):
+        print("Starting iteration: {}".format(str(i)))
         stub = prediction_service_pb2_grpc.PredictionServiceStub(channel)
         request = predict_pb2.PredictRequest()
         request.model_spec.name = 'resnet'
@@ -59,6 +60,7 @@ def main(_):
         request.inputs['image_bytes'].CopyFrom(
             tf.contrib.util.make_tensor_proto(data, shape=[FLAGS.batch_size]))
         result = stub.Predict(request, 60.0)  # 10 secs timeout
+        print("Iteration {} completed.".format(str(i)))
 
     channel.close()
 
