@@ -1,0 +1,12 @@
+sudo: required
+
+services:
+  - docker
+
+before_install:
+  - cd tfserving/yolo
+  - docker build -t niacainfosys/cloud-tfserving-yolo:1.14.0 -f tfserving-yolo-1.14.0.Dockerfile .
+
+script:
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+  - docker push niacainfosys/cloud-tfserving-yolo:1.14.0
