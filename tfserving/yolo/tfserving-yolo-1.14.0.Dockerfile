@@ -8,7 +8,7 @@ COPY yolo_keras_to_tf.py /tmp/yolo
 
 WORKDIR /tmp/yolo
 RUN wget --no-check-certificate https://onedrive.live.com/download?cid=5FDEBAB7450CDD92&resid=5FDEBAB7450CDD92%21137&authkey=AB5oeSO0Kr5yfTo
-RUN python3 --model=/tmp/yolo/raccoon.h5 --target=/tmp/yolo/1/
+RUN python3 yolo_keras_to_tf.py --model=/tmp/yolo/raccoon.h5 --target=/tmp/yolo/1/
 
 # Make Tensorflow Serving image
 FROM tensorflow/serving:1.14.0 as base_image
