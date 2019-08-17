@@ -7,7 +7,7 @@ RUN mkdir /tmp/yolo
 COPY yolo_keras_to_tf.py /tmp/yolo
 
 WORKDIR /tmp/yolo
-RUN wget -O raccoon.h5 --no-check-certificate "https://onedrive.live.com/download?cid=5FDEBAB7450CDD92&resid=5FDEBAB7450CDD92%21137&authkey=AB5oeSO0Kr5yfTo"
+RUN wget -O raccoon.h5 -nv --no-check-certificate "https://onedrive.live.com/download?cid=5FDEBAB7450CDD92&resid=5FDEBAB7450CDD92%21137&authkey=AB5oeSO0Kr5yfTo"
 RUN python3 yolo_keras_to_tf.py --model=/tmp/yolo/raccoon.h5 --target=/tmp/yolo/1/
 
 # Make Tensorflow Serving image
@@ -22,6 +22,10 @@ RUN apt-get -qq update && apt-get -qq install wget -y --no-install-recommends
 # Copy YOLO model to /models
 COPY --from=model_image /tmp/yolo/1/ /models/yolo
 ENV MODEL_NAME yolo
+
+# Download Raccoon image
+RUN mkdir -p /data/images
+RUN wget -O /data/images/raccoon.jpg -nv --no-check-certificate "https://raw.githubusercontent.com/experiencor/raccoon_dataset/master/images/raccoon-1.jpg"
 
 # Remove temp and cache folders
 RUN rm -rf /var/lib/apt/lists/* && rm -rf /var/cache/apt/* && rm -rf /root/.cache/* && rm -rf /install && apt-get clean
