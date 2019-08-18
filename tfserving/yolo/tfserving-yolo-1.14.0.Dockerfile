@@ -23,9 +23,5 @@ RUN apt-get -qq update && apt-get -qq install wget -y --no-install-recommends
 COPY --from=model_image /tmp/yolo/1/ /models/yolo
 ENV MODEL_NAME yolo
 
-# Download Raccoon image
-RUN mkdir -p /data/images
-RUN wget -O /data/images/raccoon.jpg -nv --no-check-certificate "https://raw.githubusercontent.com/experiencor/raccoon_dataset/master/images/raccoon-1.jpg"
-
 # Remove temp and cache folders
 RUN rm -rf /var/lib/apt/lists/* && rm -rf /var/cache/apt/* && rm -rf /root/.cache/* && rm -rf /install && apt-get clean

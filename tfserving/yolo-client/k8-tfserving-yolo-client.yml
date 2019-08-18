@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  generateName: yolo-client-
+spec:
+  containers:
+  - name: yolo-container
+    image: niacainfosys/cloud-tfserving-yolo-client
+    imagePullPolicy: Always
+    command: [sh, -c]
+    args: ["python3 grpc_client.py --batch_size=50 --iterations=100 --server=yolo-service:8500"]
+  restartPolicy: Never
