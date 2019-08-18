@@ -28,6 +28,7 @@ def main(_):
     
     if FLAGS.image:
         image = preprocess_input(cv2.imread(FLAGS.image), net_h, net_w)
+        print(image.shape)
     
     batch_input = [image for i in range(current_batch_size)]
     images_proto = make_tensor_proto(batch_input, shape=[current_batch_size, net_h, net_w, 3], dtype=types_pb2.DT_FLOAT)
@@ -42,7 +43,7 @@ def main(_):
             request = predict_pb2.PredictRequest()
             request.model_spec.name = "yolo"
             request.model_spec.signature_name = "serving_default"
-            request.inputs[input_feature].CopyFrom(images_proto)
+            request.inputs["inputs"].CopyFrom(images_proto)
             result = stub.Predict(request, 120.0)
         except Exception as ex:
             print("Error in predictions on model {}".format(str(ex)))
