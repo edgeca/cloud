@@ -40,7 +40,7 @@ def main(_):
             channel = grpc.insecure_channel(FLAGS.server, options=options)
             stub = prediction_service_pb2_grpc.PredictionServiceStub(channel)
             request = predict_pb2.PredictRequest()
-            request.model_spec.name = "yolo
+            request.model_spec.name = "yolo"
             request.model_spec.signature_name = "serving_default"
             request.inputs[input_feature].CopyFrom(images_proto)
             result = stub.Predict(request, 120.0)

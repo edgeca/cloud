@@ -8,5 +8,5 @@ spec:
     image: niacainfosys/cloud-tfserving-yolo-client
     imagePullPolicy: Always
     command: [sh, -c]
-    args: ["python3 grpc_client.py --batch_size=50 --iterations=100 --server=yolo-service:8500"]
+    args: ["python3 grpc_client.py --batch_size=2 --iterations=2 --server=yolo-service:8500"]
   restartPolicy: Never
