@@ -20,7 +20,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get -qq update && apt-get -qq install wget -y --no-install-recommends
 
 # Copy YOLO model to /models
-COPY --from=model_image /tmp/yolo/1/ /models/yolo
+COPY --from=model_image /tmp/yolo/1 /models/yolo/1
 ENV MODEL_NAME yolo
 
 # Remove temp and cache folders
