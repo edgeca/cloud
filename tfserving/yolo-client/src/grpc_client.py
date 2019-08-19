@@ -29,8 +29,12 @@ def main(_):
     if FLAGS.image:
         image = preprocess_input(cv2.imread(FLAGS.image), net_h, net_w)
         print(image.shape)
+
+    batch_input = np.zeros((current_batch_size, net_h, net_w, 3))
+    for i in range(current_batch_size):
+        batch_input[i] = image[0, :, :, :]
     
-    batch_input = [image for i in range(current_batch_size)]
+    # batch_input = [image for i in range(current_batch_size)]
     images_proto = make_tensor_proto(batch_input, shape=[current_batch_size, net_h, net_w, 3], dtype=types_pb2.DT_FLOAT)
     options = [('grpc.max_send_message_length', 104857600), ('grpc.max_receive_message_length', 104857600)]
 
