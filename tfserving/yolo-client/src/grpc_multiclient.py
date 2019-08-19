@@ -21,12 +21,15 @@ from __future__ import print_function
 # This is a placeholder for a Google-internal import.
 
 import grpc
-import requests
 import tensorflow as tf
+import numpy as np
+import cv2
+from multiprocessing import Pool
 
 from tensorflow_serving.apis import predict_pb2
 from tensorflow_serving.apis import prediction_service_pb2_grpc
-from multiprocessing import Pool
+from tensorflow.core.framework import types_pb2
+from tensorflow.contrib.util import make_tensor_proto
 
 # The image URL is the location of the image we should send to the server
 tf.app.flags.DEFINE_string('server', 'localhost:8500',
