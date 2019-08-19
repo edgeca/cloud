@@ -24,7 +24,7 @@ FLAGS = tf.app.flags.FLAGS
 
 def main(_):
     net_h, net_w = 416, 416
-    current_batch_size = FLAGS.iterations
+    current_batch_size = FLAGS.batch_size
     
     if FLAGS.image:
         image = preprocess_input(cv2.imread(FLAGS.image), net_h, net_w)
