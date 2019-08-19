@@ -29,46 +29,111 @@ from tensorflow_serving.apis import prediction_service_pb2_grpc
 from multiprocessing import Pool
 
 # The image URL is the location of the image we should send to the server
-IMAGE_URL = 'https://tensorflow.org/images/blogs/serving/cat.jpg'
-
 tf.app.flags.DEFINE_string('server', 'localhost:8500',
                            'PredictionService host:port')
-tf.app.flags.DEFINE_string('image', '', 'path to image in JPEG format')
+tf.app.flags.DEFINE_string(
+    'image', '/data/images/raccoon.jpg', 'path to image in JPEG format')
 tf.app.flags.DEFINE_integer('batch_size', 1, 'batch size sent to tf serving')
 tf.app.flags.DEFINE_integer('iterations', 1, 'iterations to run this script')
 tf.app.flags.DEFINE_integer('users', 1, 'number of concurrent users')
 FLAGS = tf.app.flags.FLAGS
 
 
-def predict(data):
-    channel = grpc.insecure_channel(FLAGS.server)
+def predict(images_proto):
+    options = [('grpc.max_send_message_length', 104857600),
+               ('grpc.max_receive_message_length', 104857600)]
+    channel = grpc.insecure_channel(FLAGS.server, options=options)
     stub = prediction_service_pb2_grpc.PredictionServiceStub(channel)
     request = predict_pb2.PredictRequest()
-    request.model_spec.name = 'resnet'
-    request.model_spec.signature_name = 'serving_default'
-    request.inputs['image_bytes'].CopyFrom(
-        tf.contrib.util.make_tensor_proto(data, shape=[FLAGS.batch_size]))
-    result = stub.Predict(request, 60.0)
+    request.model_spec.name = "yolo"
+    request.model_spec.signature_name = "serving_default"
+    request.inputs["inputs"].CopyFrom(images_proto)
+    result = stub.Predict(request, 300.0)
     return result
 
 
 def main(_):
-    if FLAGS.image:
-        with open(FLAGS.image, 'rb') as f:
-            data = f.read()
-    else:
-        # Download the image since we weren't given one
-        dl_request = requests.get(IMAGE_URL, stream=True)
-        dl_request.raise_for_status()
-        data = dl_request.content
+    net_h, net_w = 416, 416
+    current_batch_size = FLAGS.iterations
 
-    data = [data for i in range(FLAGS.batch_size)]
+    if FLAGS.image:
+        image = preprocess_input(cv2.imread(FLAGS.image), net_h, net_w)
+        print(image.shape)
+
+    batch_input = np.zeros((current_batch_size, net_h, net_w, 3))
+    for i in range(current_batch_size):
+        batch_input[i] = image[0, :, :, :]
+
+    images_proto = make_tensor_proto(batch_input, shape=[
+                                     current_batch_size, net_h, net_w, 3], dtype=types_pb2.DT_FLOAT)
 
     for i in range(FLAGS.iterations):
         print("Starting iteration: {}".format(str(i)))
         with Pool(FLAGS.users) as p:
-            results = p.map(predict, [data for i in range(FLAGS.users)])
+            results = p.map(
+                predict, [images_proto for i in range(FLAGS.users)])
         print("Iteration {} completed.".format(str(i)))
+
+
+def preprocess_input(image, net_h, net_w):
+    new_h, new_w, _ = image.shape
+
+    # determine the new size of the image
+    if (float(net_w)/new_w) < (float(net_h)/new_h):
+        new_h = (new_h * net_w)//new_w
+        new_w = net_w
+    else:
+        new_w = (new_w * net_h)//new_h
+        new_h = net_h
+
+    # resize the image to the new size
+    resized = cv2.resize(image[:, :, ::-1]/255., (new_w, new_h))
+
+    # embed the image into the standard letter box
+    new_image = np.ones((net_h, net_w, 3)) * 0.5
+    new_image[(net_h-new_h)//2:(net_h+new_h)//2,
+              (net_w-new_w)//2:(net_w+new_w)//2, :] = resized
+    new_image = np.expand_dims(new_image, 0)
+
+    return new_image
+
+
+def predict_on_images(model_name, signature_name, input_feature, images):
+    """Runs prediction on images
+
+    Runs prediction on given images inside Tensorflow Serving container for given model.
+
+    Parameters
+    ----------
+    model_name - string
+        Name of the table detection model
+    signature_name - string
+        Model signature
+    input_feature - string
+        Name of the input feature
+    images - TensorProto
+        List of images as TensorProto
+
+    Returns
+    -------
+    dict
+        Result as dictionary
+    """
+    try:
+        channel = self.get_channel()
+        stub = prediction_service_pb2_grpc.PredictionServiceStub(channel)
+        request = predict_pb2.PredictRequest()
+        request.model_spec.name = model_name
+        request.model_spec.signature_name = signature_name
+        request.inputs[input_feature].CopyFrom(images)
+        result = stub.Predict(request, self.timeout)
+        return result
+    except Exception as ex:
+        logger.error(
+            "Error in predictions on model {} - {}".format(model_name, str(ex)))
+        return None
+    finally:
+        channel.close()
 
 
 if __name__ == '__main__':
