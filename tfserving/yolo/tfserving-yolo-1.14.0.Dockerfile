@@ -1,6 +1,6 @@
 # Create a temp image to convert YOLO model to TF Serving SavedModel format
 FROM python:3.6.9 as model_image
-RUN pip3 install Keras tensorflow
+RUN pip3 install Keras==2.2.4 tensorflow==1.12.0
 
 # Download YOLO model
 RUN mkdir /tmp/yolo
