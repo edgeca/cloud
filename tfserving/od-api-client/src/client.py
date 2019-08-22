@@ -68,10 +68,12 @@ if __name__ == "__main__":
 
     start = timer()
     for i in range(args.iterations):
-        model_names = get_model_names(
-            concurrent_models=num_models, total_models=users)
-        inputs = [random.choice(
-            data_pool) if args.size <= 0 else str(args.size) for user in range(users)]
+        model_names = [models_pool[0] for i in range(users)]
+        # model_names = get_model_names(
+        #     concurrent_models=num_models, total_models=users)
+        inputs = [data_pool[0] for i in range(users)]
+        # inputs = [random.choice(
+        #     data_pool) if args.size <= 0 else str(args.size) for user in range(users)]
         with Pool(users) as p:
             runtimes = p.starmap(predict, zip(
                 model_names, inputs))
