@@ -1,0 +1,12 @@
+sudo: required
+
+services:
+  - docker
+
+before_install:
+  - cd tfserving/yolo-client
+  - docker build -t niacainfosys/cloud-od-api-client -f od-api-client.Dockerfile .
+
+script:
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+  - docker push niacainfosys/cloud-od-api-client
