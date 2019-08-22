@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tfserving
+  namespace: nia
+spec:
+  selector:
+    matchLabels:
+      run: tfserving
+  replicas: 1
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        run: tfserving
+    spec:
+      volumes:
+        - name: models-pv-storage
+          persistentVolumeClaim:
+            claimName: pvc-nia-vision-models
+        - name: tfs-logs-storage
+          persistentVolumeClaim:
+            claimName: pvc-tfs-logs
+      containers:
+      - name: tfserving
+        image: niacainfosys/cloud-vision-serving
+        volumeMounts:
+        - name: models-pv-storage
+          mountPath: /models
+        - name: tfs-logs-storage
+          mountPath: /tfs-logs
+        resources:
+          limits:
+            memory: "16Gi"
+        ports:
+        - containerPort: 8500
+      restartPolicy: Always
+      nodeSelector:
+        vision: "true"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vision-tfserving-service
+  namespace: nia
+  labels:
+    run: vision-tfserving-service
+spec:
+  ports:
+  - port: 9798
+    targetPort: 8500
+  selector:
+    run: tfserving
+  type: ClusterIP

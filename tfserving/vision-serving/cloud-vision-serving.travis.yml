@@ -1,0 +1,12 @@
+sudo: required
+
+services:
+  - docker
+
+before_install:
+  - cd tfserving/vision-serving
+  - docker build -t niacainfosys/cloud-vision-serving -f cloud-vision-serving.Dockerfile .
+
+script:
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+  - docker push niacainfosys/cloud-vision-serving
