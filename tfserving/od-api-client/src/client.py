@@ -19,15 +19,12 @@ def predict(model_name, images):
         start = timer()
         print("Sending request for model: {}, with images(s): {}".format(
             model_name, images))
-        r = requests.post(url, verify=False, data={
+        r = requests.post(url + '/predict', verify=False, data={
             'input_path': images,
             'model': model_name
         })
         response = r.json()
         if response['status'] is None or response['status'] != 'success':
-            raise Exception
-        response = r.text
-        if not response == 'success':
             raise Exception
         end = timer()
         print("Completed prediction for model: {}, with image(s): {} in {:0.2f}s".format(
