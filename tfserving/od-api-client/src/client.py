@@ -22,7 +22,7 @@ def predict(model_name, images):
         r = requests.post(url + '/predict', verify=False, data={
             'input_path': images,
             'model': model_name
-        })
+        }, timeout=600)
         response = r.json()
         if response['status'] is None or response['status'] != 'success':
             raise Exception
@@ -75,9 +75,9 @@ if __name__ == "__main__":
         with Pool(users) as p:
             runtimes = p.starmap(predict, zip(
                 model_names, inputs))
-        print("Min. response time: {:0.2f}s".format(min(runtimes)))
-        print("Max. response time: {:0.2f}s".format(max(runtimes)))
-        print("Avg. response time: {:0.2f}s".format(mean(runtimes)))
+        # print("Min. response time: {:0.2f}s".format(min(runtimes)))
+        # print("Max. response time: {:0.2f}s".format(max(runtimes)))
+        # print("Avg. response time: {:0.2f}s".format(mean(runtimes)))
         print("Completed iteration: {}".format(i+1))
 
     end = timer()
