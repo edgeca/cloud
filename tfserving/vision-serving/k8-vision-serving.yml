@@ -28,6 +28,7 @@ spec:
       containers:
       - name: tfserving
         image: niacainfosys/cloud-vision-serving
+        imagePullPolicy: Always
         volumeMounts:
         - name: models-pv-storage
           mountPath: /models
