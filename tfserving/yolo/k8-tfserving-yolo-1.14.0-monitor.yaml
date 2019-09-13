@@ -19,12 +19,22 @@ metadata:
   labels:
     app: yolo-server
 spec:
+  volumes:
+  - name: tfs-logs-storage
+    persistentVolumeClaim:
+      claimName: pvc-tfs-logs
   containers:
   - name: yolo-container
     image: niacainfosys/cloud-tfserving-yolo:1.14.0
     imagePullPolicy: Always
     command: [sh, -c]
     args: ["/usr/bin/monitor_serving.sh"]
+    volumeMounts:
+    - name: tfs-logs-storage
+      mountPath: /tfs-logs
+    resources:
+      limits:
+        memory: "16Gi"
     ports:
     - containerPort: 8500
   restartPolicy: Never
