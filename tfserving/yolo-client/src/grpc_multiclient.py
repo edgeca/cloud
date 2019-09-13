@@ -25,6 +25,7 @@ import tensorflow as tf
 import numpy as np
 import cv2
 from multiprocessing import Pool
+import random
 
 from tensorflow_serving.apis import predict_pb2
 from tensorflow_serving.apis import prediction_service_pb2_grpc
@@ -41,6 +42,8 @@ tf.app.flags.DEFINE_integer('iterations', 1, 'iterations to run this script')
 tf.app.flags.DEFINE_integer('users', 1, 'number of concurrent users')
 FLAGS = tf.app.flags.FLAGS
 
+models = ["yolo_1", "yolo_2", "yolo_3"]
+
 
 def predict(images_proto):
     options = [('grpc.max_send_message_length', 104857600),
@@ -48,10 +51,15 @@ def predict(images_proto):
     channel = grpc.insecure_channel(FLAGS.server, options=options)
     stub = prediction_service_pb2_grpc.PredictionServiceStub(channel)
     request = predict_pb2.PredictRequest()
-    request.model_spec.name = "yolo"
+
+    model_name = random.choice(models)
+    print("Predicting on: {}".format(model_name))
+
+    request.model_spec.name = model_name
     request.model_spec.signature_name = "serving_default"
     request.inputs["inputs"].CopyFrom(images_proto)
     result = stub.Predict(request, 300.0)
+    channel.close()
     return result
 
 
@@ -61,7 +69,6 @@ def main(_):
 
     if FLAGS.image:
         image = preprocess_input(cv2.imread(FLAGS.image), net_h, net_w)
-        print(image.shape)
 
     batch_input = np.zeros((current_batch_size, net_h, net_w, 3))
     for i in range(current_batch_size):
@@ -99,44 +106,6 @@ def preprocess_input(image, net_h, net_w):
     new_image = np.expand_dims(new_image, 0)
 
     return new_image
-
-
-def predict_on_images(model_name, signature_name, input_feature, images):
-    """Runs prediction on images
-
-    Runs prediction on given images inside Tensorflow Serving container for given model.
-
-    Parameters
-    ----------
-    model_name - string
-        Name of the table detection model
-    signature_name - string
-        Model signature
-    input_feature - string
-        Name of the input feature
-    images - TensorProto
-        List of images as TensorProto
-
-    Returns
-    -------
-    dict
-        Result as dictionary
-    """
-    try:
-        channel = self.get_channel()
-        stub = prediction_service_pb2_grpc.PredictionServiceStub(channel)
-        request = predict_pb2.PredictRequest()
-        request.model_spec.name = model_name
-        request.model_spec.signature_name = signature_name
-        request.inputs[input_feature].CopyFrom(images)
-        result = stub.Predict(request, self.timeout)
-        return result
-    except Exception as ex:
-        logger.error(
-            "Error in predictions on model {} - {}".format(model_name, str(ex)))
-        return None
-    finally:
-        channel.close()
 
 
 if __name__ == '__main__':

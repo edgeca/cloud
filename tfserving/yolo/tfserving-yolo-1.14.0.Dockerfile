@@ -20,8 +20,16 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get -qq update && apt-get -qq install wget -y --no-install-recommends
 
 # Copy YOLO model to /models
-COPY --from=model_image /tmp/yolo/1 /models/yolo/1
-ENV MODEL_NAME yolo
+COPY --from=model_image /tmp/yolo/1 /models/yolo_1/1
+COPY --from=model_image /tmp/yolo/1 /models/yolo_2/1
+COPY --from=model_image /tmp/yolo/1 /models/yolo_3/1
+COPY models.config /models/models.config
+
+# Copy monitoring script
+COPY monitor_serving.sh /usr/bin/monitor_serving.sh
+RUN chmod a+x /usr/bin/monitor_serving.sh
 
 # Remove temp and cache folders
 RUN rm -rf /var/lib/apt/lists/* && rm -rf /var/cache/apt/* && rm -rf /root/.cache/* && rm -rf /install && apt-get clean
+
+ENTRYPOINT []

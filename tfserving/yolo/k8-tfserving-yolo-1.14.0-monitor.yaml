@@ -24,7 +24,7 @@ spec:
     image: niacainfosys/cloud-tfserving-yolo:1.14.0
     imagePullPolicy: Always
     command: [sh, -c]
-    args: ["tensorflow_model_server --port=8500 --model_config_file=/models/models.config"]
+    args: ["/usr/bin/monitor_serving.sh"]
     ports:
     - containerPort: 8500
   restartPolicy: Never
