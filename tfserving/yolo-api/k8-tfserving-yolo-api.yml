@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: yolo-api
+  labels:
+    app: yolo-api
+spec:
+  containers:
+    - name: yolo-api
+      image: niacainfosys/cloud-tfserving-yolo-api
+      imagePullPolicy: Always
+      command: [sh, -c]
+      args:
+        ["gunicorn -k gevent app:app -w 6 --bind 127.0.0.1:80  --timeout 120"]
+  restartPolicy: Nevers
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    run: yolo-api-service
+  name: yolo-api-service
+spec:
+  ports:
+    - port: 80
+      targetPort: 80
+  selector:
+    app: yolo-api
+  type: ClusterIP
