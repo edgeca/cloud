@@ -12,7 +12,7 @@ spec:
       command: [sh, -c]
       args:
         ["gunicorn -k gevent app:app -w 6 --bind 127.0.0.1:80  --timeout 120"]
-  restartPolicy: Nevers
+  restartPolicy: Never
 ---
 apiVersion: v1
 kind: Service
