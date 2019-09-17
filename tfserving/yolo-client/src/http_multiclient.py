@@ -33,7 +33,7 @@ from tensorflow_serving.apis import prediction_service_pb2_grpc
 from tensorflow.core.framework import types_pb2
 from tensorflow.contrib.util import make_tensor_proto
 
-tf.app.flags.DEFINE_string('url', 'yolo-api-service:80/predict',
+tf.app.flags.DEFINE_string('url', 'http://yolo-api-service/predict',
                            'URL for prediction')
 tf.app.flags.DEFINE_integer('batch_size', 1, 'batch size sent to tf serving')
 tf.app.flags.DEFINE_integer('iterations', 1, 'iterations to run this script')
@@ -44,7 +44,8 @@ models = ["yolo_1", "yolo_2", "yolo_3"]
 
 
 def predict(batch_size):
-    model_name = random.choice(models)
+    # model_name = random.choice(models)
+    model_name = "yolo_1"
     print("Predicting on: {}".format(model_name))
     r = requests.get(FLAGS.url, params={
         'model_name': model_name,

@@ -11,7 +11,7 @@ spec:
       imagePullPolicy: Always
       command: [sh, -c]
       args:
-        ["gunicorn -k gevent app:app -w 6 --bind 127.0.0.1:80  --timeout 120"]
+        ["gunicorn -k gevent app:app -w 6 --bind 0.0.0.0:80 --timeout 120"]
   restartPolicy: Never
 ---
 apiVersion: v1
