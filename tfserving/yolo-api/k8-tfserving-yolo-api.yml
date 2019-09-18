@@ -10,8 +10,10 @@ spec:
       image: niacainfosys/cloud-tfserving-yolo-api
       imagePullPolicy: Always
       command: [sh, -c]
-      args:
-        ["gunicorn -k gevent app:app -w 6 --bind 0.0.0.0:80 --timeout 120"]
+      args: ["gunicorn -k gevent app:app -w 6 --bind 0.0.0.0:80  --timeout 120"]
+      env:
+        - name: PYTHONUNBUFFERED
+          value: "TRUE"
   restartPolicy: Never
 ---
 apiVersion: v1

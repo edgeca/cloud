@@ -8,5 +8,5 @@ spec:
     image: niacainfosys/cloud-tfserving-yolo-client
     imagePullPolicy: Always
     command: [sh, -c]
-    args: ["python3 http_multiclient.py --users=2 --batch_size=2 --iterations=2"]
+    args: ["python3 http_multiclient.py --users=4 --batch_size=30 --iterations=2000 --url=http://yolo-api-service/predict"]
   restartPolicy: Never
