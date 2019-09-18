@@ -40,12 +40,12 @@ tf.app.flags.DEFINE_integer('iterations', 1, 'iterations to run this script')
 tf.app.flags.DEFINE_integer('users', 1, 'number of concurrent users')
 FLAGS = tf.app.flags.FLAGS
 
-models = ["yolo_1", "yolo_2", "yolo_3"]
+# models = ["yolo_1", "yolo_2", "yolo_3"]
 
 
 def predict(batch_size):
     # model_name = random.choice(models)
-    model_name = "yolo_1"
+    model_name = "yolo"
     print("Predicting on: {}".format(model_name))
     r = requests.get(FLAGS.url, params={
         'model_name': model_name,

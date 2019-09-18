@@ -20,9 +20,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get -qq update && apt-get -qq install wget -y --no-install-recommends
 
 # Copy YOLO model to /models
-COPY --from=model_image /tmp/yolo/1 /models/yolo_1/1
-COPY --from=model_image /tmp/yolo/1 /models/yolo_2/1
-COPY --from=model_image /tmp/yolo/1 /models/yolo_3/1
+COPY --from=model_image /tmp/yolo/1 /models/yolo/1
 COPY models.config /models/models.config
 
 # Copy monitoring script

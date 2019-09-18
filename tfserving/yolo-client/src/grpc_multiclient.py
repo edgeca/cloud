@@ -25,7 +25,7 @@ import tensorflow as tf
 import numpy as np
 import cv2
 from multiprocessing import Pool
-import random
+# import random
 
 from tensorflow_serving.apis import predict_pb2
 from tensorflow_serving.apis import prediction_service_pb2_grpc
@@ -42,7 +42,7 @@ tf.app.flags.DEFINE_integer('iterations', 1, 'iterations to run this script')
 tf.app.flags.DEFINE_integer('users', 1, 'number of concurrent users')
 FLAGS = tf.app.flags.FLAGS
 
-models = ["yolo_1", "yolo_2", "yolo_3"]
+# models = ["yolo_1", "yolo_2", "yolo_3"]
 
 
 def predict(images_proto):
@@ -52,7 +52,7 @@ def predict(images_proto):
     stub = prediction_service_pb2_grpc.PredictionServiceStub(channel)
     request = predict_pb2.PredictRequest()
 
-    model_name = random.choice(models)
+    model_name = "yolo"
     print("Predicting on: {}".format(model_name))
 
     request.model_spec.name = model_name
